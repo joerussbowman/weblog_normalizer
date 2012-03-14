@@ -1,0 +1,38 @@
+weblog_normalizer
+
+weblog_normalizer is a python script I wrote to extract some basic
+information from web logs. It was written in an environment where
+the standard "just awk it" approach wasn't as much of an option.
+
+This script will extract status code and request url from various
+outputs of apache and iislogs. In my environment we have several
+varying versions of apache log formats and also have several iis
+servers.
+
+At this point, it's a bit of a hack. However, it does "just work".
+
+It current outputs all lines of web log as
+
+[ STATUS CODE ] [ REQUEST URL ]
+
+ie:
+
+200 /
+404 /notfound
+301 /redirectme
+
+With this output you can then pipe it through various shell
+scripts as you like.
+
+For exmaple I use it in a shell script to generate a report of
+all non-valid status code requests and how many times they've been
+hit in the log file.
+
+$ANALYZESCRIPT -f $log | grep -v "^ 200 " | grep -v "^ 301 " | grep -v "^ 302 " | grep -v "^ 304 " | sort -g | uniq -c | sort -g -r | sed 's/^\s*//g' >> $REPORTFILE
+
+The script supports non-compressed or gzip compressed files.
+
+Note: At some point if there's interest in the script I'll clean it
+up a bit, adding help and usage methods and such. If you have any
+suggestions for improvements please use the issue system, or even 
+better, send a pull request.
